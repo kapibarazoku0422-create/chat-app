@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<<<<<<< HEAD
 <title>🐾 カピバラ掲示板</title>
 <script src="/socket.io/socket.io.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,24 +48,6 @@ html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--bg
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--text-light)}
-=======
-<title>カピバラ掲示板</title>
-<script src="/socket.io/socket.io.js"></script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#efefef;--page:#fff;--border:#aaa;--border-light:#ddd;
-  --header-bg:#00f;--header-text:#fff;
-  --name:#00c;--sage:#789922;--admin:#f00;
-  --odd:#fffde7;--even:#fff;
-  --link:#00c;--visited:#800080;
-  --btn-bg:#d4d0c8;--btn-border:#888;
-  --input-bg:#fff;
-  --font:Meiryo,'ヒラギノ角ゴ Pro W3','MS PGothic',sans-serif;
-  --mono:'MS Gothic','Courier New',monospace;
-}
-html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg);color:#000}
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 
 /* ═══════════════════════════════
    ログイン画面
@@ -74,7 +55,6 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
 #auth-screen{
   display:flex;align-items:center;justify-content:center;
   min-height:100vh;padding:20px;
-<<<<<<< HEAD
   background:var(--bg);
   background-image:radial-gradient(circle at 20% 50%, rgba(196,123,60,.08) 0%, transparent 50%),
                    radial-gradient(circle at 80% 20%, rgba(90,158,111,.08) 0%, transparent 40%);
@@ -136,48 +116,10 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
 .btn-primary:active{transform:scale(.98);}
 
 .auth-err{color:var(--red);font-size:12px;margin-top:10px;text-align:center;min-height:16px;}
-=======
-}
-.auth-box{
-  background:var(--page);border:2px solid var(--border);
-  padding:0;width:100%;max-width:420px;
-}
-.auth-box-header{
-  background:var(--header-bg);color:var(--header-text);
-  padding:6px 10px;font-size:14px;font-weight:bold;
-}
-.auth-box-body{padding:20px;}
-.auth-tabs{display:flex;margin-bottom:16px;border-bottom:2px solid var(--border);}
-.auth-tab{
-  padding:6px 18px;cursor:pointer;background:var(--btn-bg);
-  border:1px solid var(--border);border-bottom:none;font-size:13px;
-  margin-right:2px;margin-bottom:-2px;
-}
-.auth-tab.active{background:#fff;border-bottom:2px solid #fff;font-weight:bold;}
-.auth-panel{display:none;}
-.auth-panel.active{display:block;}
-.auth-row{display:flex;align-items:center;margin-bottom:10px;gap:8px;}
-.auth-row label{width:110px;text-align:right;flex-shrink:0;font-size:13px;}
-.auth-row input{
-  flex:1;padding:4px 6px;border:1px solid var(--border);
-  background:var(--input-bg);font-size:13px;font-family:var(--font);
-}
-.auth-row input:focus{outline:1px solid var(--header-bg);}
-.auth-btns{display:flex;justify-content:center;margin-top:14px;}
-.btn{
-  padding:4px 20px;border:2px outset var(--btn-border);
-  background:var(--btn-bg);cursor:pointer;font-size:13px;
-  font-family:var(--font);
-}
-.btn:active{border-style:inset;}
-.btn:hover{background:#c4c0b8;}
-.auth-err{color:red;font-size:12px;margin-top:8px;text-align:center;min-height:16px;}
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 
 /* ═══════════════════════════════
    チャット画面
 ═══════════════════════════════ */
-<<<<<<< HEAD
 #chat-screen{display:none;height:100vh;flex-direction:column;}
 
 /* ─ ヘッダー ─ */
@@ -550,203 +492,12 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
   animation:slideUp .3s ease;
 }
 @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-=======
-#chat-screen{display:none;flex-direction:column;min-height:100vh;}
-
-/* ─ サイトヘッダー ─ */
-#site-header{
-  background:var(--header-bg);color:var(--header-text);
-  padding:4px 10px;display:flex;align-items:center;justify-content:space-between;
-  flex-shrink:0;
-}
-#site-header .site-title{font-size:16px;font-weight:bold;letter-spacing:1px;}
-#site-header .user-info{font-size:12px;display:flex;align-items:center;gap:10px;}
-#site-header .user-info a{color:#ff9;cursor:pointer;text-decoration:underline;}
-
-/* ─ レイアウト ─ */
-#body-wrap{display:flex;flex:1;align-items:flex-start;padding:8px;gap:8px;}
-
-/* ─ 板一覧（左サイドバー） ─ */
-#board-list{
-  width:150px;flex-shrink:0;background:var(--page);
-  border:1px solid var(--border);
-}
-#board-list .bl-header{
-  background:#00c;color:#fff;padding:3px 6px;
-  font-size:12px;font-weight:bold;
-}
-#board-list ul{list-style:none;padding:4px 0;}
-#board-list li a{
-  display:block;padding:3px 10px;color:var(--link);
-  text-decoration:none;font-size:12px;cursor:pointer;
-}
-#board-list li a:hover{background:#e8e8ff;text-decoration:underline;}
-#board-list li a.active{font-weight:bold;color:#f00;}
-
-/* ─ メインエリア ─ */
-#main-area{flex:1;min-width:0;}
-
-/* スレタイトルバー */
-#thread-title-bar{
-  background:var(--header-bg);color:var(--header-text);
-  padding:4px 10px;font-size:13px;font-weight:bold;
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:4px;
-}
-#thread-title-bar .member-info{font-size:11px;font-weight:normal;opacity:.9;}
-
-/* 書き込みフォーム */
-#post-form{
-  background:var(--page);border:1px solid var(--border);
-  padding:10px;margin-bottom:6px;
-}
-#post-form .form-title{
-  font-size:12px;font-weight:bold;color:#00c;
-  border-bottom:1px solid var(--border-light);margin-bottom:8px;padding-bottom:4px;
-}
-.form-row{display:flex;align-items:flex-start;margin-bottom:6px;gap:6px;}
-.form-row label{width:70px;text-align:right;padding-top:3px;font-size:12px;flex-shrink:0;}
-.form-row input[type=text]{
-  flex:1;max-width:280px;padding:3px 5px;border:1px solid var(--border);
-  background:var(--input-bg);font-size:13px;font-family:var(--font);
-}
-.form-row input[type=text]:focus{outline:1px solid #00c;}
-.form-row textarea{
-  flex:1;max-width:500px;height:80px;resize:vertical;
-  padding:4px 6px;border:1px solid var(--border);
-  background:var(--input-bg);font-size:13px;font-family:var(--font);
-  line-height:1.5;
-}
-.form-row textarea:focus{outline:1px solid #00c;}
-.form-btns{display:flex;gap:8px;margin-left:76px;}
-.sage-note{font-size:11px;color:#888;margin-left:4px;}
-
-/* タイピング */
-#typing-bar{
-  font-size:11px;color:#888;padding:2px 4px;min-height:18px;
-  font-style:italic;
-}
-
-/* ─ レスリスト ─ */
-#res-list{background:var(--page);border:1px solid var(--border);}
-
-/* レス1件 */
-.res{
-  padding:6px 10px;border-bottom:1px solid var(--border-light);
-}
-.res:nth-child(odd){background:var(--odd);}
-.res:nth-child(even){background:var(--even);}
-.res:last-child{border-bottom:none;}
-
-/* レスヘッダー */
-.res-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
-.res-num{color:#f00;font-weight:bold;font-size:12px;}
-.res-name{color:var(--name);font-weight:bold;font-size:12px;}
-.res-name.admin-name{color:var(--admin);}
-.res-trip{color:var(--sage);font-size:11px;}
-.res-date{color:#888;font-size:11px;}
-.res-id{color:#888;font-size:11px;}
-/* 管理者削除ボタン */
-.res-del{
-  margin-left:auto;background:none;border:none;
-  color:#aaa;font-size:11px;cursor:pointer;padding:0 2px;
-}
-.res-del:hover{color:red;}
-
-/* レス本文 */
-.res-body{
-  font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-all;
-  padding-left:4px;
-}
-/* システムメッセージ */
-.res.system-res .res-body{color:#888;font-size:11px;font-style:italic;}
-.res.system-res .res-head{display:none;}
-
-/* 管理者バッジ */
-.admin-badge{
-  font-size:10px;background:#f00;color:#fff;
-  padding:1px 4px;border-radius:2px;font-weight:bold;
-}
-
-/* ─ 管理ダッシュボード ─ */
-#admin-overlay{
-  display:none;position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:16px;
-}
-#admin-overlay.open{display:flex;}
-.admin-panel{
-  background:var(--page);border:2px solid var(--border);
-  width:100%;max-width:700px;max-height:90vh;display:flex;flex-direction:column;
-}
-.admin-panel-header{
-  background:var(--header-bg);color:var(--header-text);
-  padding:5px 10px;display:flex;align-items:center;justify-content:space-between;
-  font-size:13px;font-weight:bold;flex-shrink:0;
-}
-.admin-panel-body{flex:1;overflow-y:auto;padding:14px;}
-.adm-section{margin-bottom:18px;}
-.adm-section-title{
-  font-size:12px;font-weight:bold;color:#00c;
-  border-bottom:1px solid var(--border-light);margin-bottom:8px;padding-bottom:3px;
-}
-.adm-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-.adm-stat{
-  background:#e8e8ff;border:1px solid #aaf;
-  padding:6px 14px;font-size:12px;text-align:center;
-}
-.adm-stat .v{font-size:20px;font-weight:bold;color:#00c;display:block;}
-.adm-stat .l{color:#888;}
-.adm-new-room{display:flex;gap:6px;margin-bottom:8px;}
-.adm-new-room input{
-  flex:1;padding:3px 6px;border:1px solid var(--border);
-  font-size:13px;font-family:var(--font);
-}
-.adm-room-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:5px 8px;border:1px solid var(--border-light);margin-bottom:4px;
-  background:#fafafa;font-size:12px;
-}
-.adm-user-table{width:100%;border-collapse:collapse;font-size:12px;}
-.adm-user-table th{
-  background:#e0e0e0;border:1px solid var(--border);
-  padding:4px 8px;text-align:left;
-}
-.adm-user-table td{border:1px solid var(--border-light);padding:4px 8px;}
-.adm-user-table tr:nth-child(even) td{background:#f8f8f8;}
-.btn-danger{background:#fdd;border-color:#f88;color:#c00;}
-.btn-danger:hover{background:#fcc;}
-.btn-warn{background:#ffe8b0;border-color:#d4a;color:#a60;}
-.btn-warn:hover{background:#ffd880;}
-.adm-log{max-height:160px;overflow-y:auto;border:1px solid var(--border-light);background:#fafafa;}
-.adm-log-row{
-  display:flex;gap:6px;align-items:flex-start;padding:3px 6px;
-  border-bottom:1px solid var(--border-light);font-size:11px;
-}
-.adm-log-row:last-child{border-bottom:none;}
-.adm-log-meta{color:#888;white-space:nowrap;flex-shrink:0;}
-.adm-log-text{flex:1;word-break:break-all;}
-.adm-log-del{background:none;border:none;color:#f00;cursor:pointer;font-size:11px;flex-shrink:0;}
-
-/* キック画面 */
-#kicked-overlay{
-  display:none;position:fixed;inset:0;z-index:300;
-  background:#efefef;align-items:center;justify-content:center;
-}
-#kicked-overlay.open{display:flex;}
-.kicked-box{
-  background:#fff;border:2px solid #f00;padding:30px;
-  text-align:center;max-width:300px;
-}
-.kicked-box h2{color:#f00;margin-bottom:8px;font-size:16px;}
-.kicked-box p{font-size:13px;color:#555;}
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 </style>
 </head>
 <body>
 
 <!-- ══════════════════ ログイン画面 ══════════════════ -->
 <div id="auth-screen">
-<<<<<<< HEAD
   <div class="auth-card">
     <div class="auth-header">
       <div class="logo">🐾</div>
@@ -771,30 +522,6 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
         <div class="field"><label>パスワード（4文字以上）</label><input type="password" id="reg-pass" placeholder="パスワードを設定" autocomplete="new-password"/></div>
         <div class="field"><label>パスワード確認</label><input type="password" id="reg-pass2" placeholder="もう一度入力" autocomplete="new-password"/></div>
         <button class="btn-primary" id="reg-btn">登録してログイン</button>
-=======
-  <div class="auth-box">
-    <div class="auth-box-header">🐾 カピバラ掲示板 — ログイン / 新規登録</div>
-    <div class="auth-box-body">
-      <div class="auth-tabs">
-        <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">ログイン</div>
-        <div class="auth-tab" id="tab-reg" onclick="switchTab('reg')">新規登録</div>
-      </div>
-
-      <!-- ログイン -->
-      <div class="auth-panel active" id="panel-login">
-        <div class="auth-row"><label>名前：</label><input type="text" id="login-name" placeholder="ユーザー名" maxlength="20"/></div>
-        <div class="auth-row"><label>パスワード：</label><input type="password" id="login-pass" placeholder="パスワード"/></div>
-        <div class="auth-btns"><button class="btn" id="login-btn">ログイン</button></div>
-        <div class="auth-err" id="login-err"></div>
-      </div>
-
-      <!-- 新規登録 -->
-      <div class="auth-panel" id="panel-reg">
-        <div class="auth-row"><label>名前：</label><input type="text" id="reg-name" placeholder="ユーザー名（20文字以内）" maxlength="20"/></div>
-        <div class="auth-row"><label>パスワード：</label><input type="password" id="reg-pass" placeholder="4文字以上"/></div>
-        <div class="auth-row"><label>確認：</label><input type="password" id="reg-pass2" placeholder="もう一度入力"/></div>
-        <div class="auth-btns"><button class="btn" id="reg-btn">登録してログイン</button></div>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
         <div class="auth-err" id="reg-err"></div>
       </div>
     </div>
@@ -803,7 +530,6 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
 
 <!-- ══════════════════ チャット画面 ══════════════════ -->
 <div id="chat-screen">
-<<<<<<< HEAD
   <div id="site-header">
     <div class="header-left">
       <span class="site-logo">🐾</span>
@@ -816,21 +542,10 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
       <span id="admin-badge-header" class="admin-badge" style="display:none">管理者</span>
       <button id="admin-link" class="btn-header accent" style="display:none" onclick="openAdmin()">管理画面</button>
       <button class="btn-header" onclick="logout()">ログアウト</button>
-=======
-  <!-- サイトヘッダー -->
-  <div id="site-header">
-    <span class="site-title">🐾 カピバラ掲示板</span>
-    <div class="user-info">
-      <span id="header-username"></span>
-      <span id="admin-badge-header" class="admin-badge" style="display:none">管理者</span>
-      <a id="admin-link" style="display:none" onclick="openAdmin()">【管理画面】</a>
-      <a onclick="logout()">ログアウト</a>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     </div>
   </div>
 
   <div id="body-wrap">
-<<<<<<< HEAD
     <!-- サイドバー -->
     <div id="sidebar">
       <div class="sidebar-header">
@@ -865,37 +580,11 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
         <div class="empty-state" id="empty-state">
           <div class="empty-icon">🐾</div>
           <p>板を選んでメッセージを読み込もう</p>
-=======
-    <!-- 左：板一覧 -->
-    <div id="board-list">
-      <div class="bl-header">■ 板一覧</div>
-      <ul id="room-ul"></ul>
-    </div>
-
-    <!-- 右：スレ -->
-    <div id="main-area">
-      <div id="thread-title-bar">
-        <span id="thread-title">板を選択してください</span>
-        <span class="member-info" id="member-info"></span>
-      </div>
-
-      <!-- 書き込みフォーム -->
-      <div id="post-form">
-        <div class="form-title">■ 書き込み</div>
-        <div class="form-row">
-          <label>本文：</label>
-          <textarea id="msg-input" placeholder="ここに書き込む（Ctrl+Enterで投稿）"></textarea>
-        </div>
-        <div class="form-btns">
-          <button class="btn" id="send-btn">書き込む</button>
-          <span class="sage-note">※ Ctrl+Enterでも投稿できます</span>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
         </div>
       </div>
 
       <div id="typing-bar"></div>
 
-<<<<<<< HEAD
       <div id="post-form">
         <div class="form-inner">
           <textarea id="msg-input" placeholder="メッセージを入力… (Ctrl+Enter で送信)" rows="1"></textarea>
@@ -903,10 +592,6 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
         </div>
         <div class="form-hint">Ctrl+Enter で送信</div>
       </div>
-=======
-      <!-- レス一覧 -->
-      <div id="res-list"></div>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     </div>
   </div>
 </div>
@@ -914,7 +599,6 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
 <!-- 管理者ダッシュボード -->
 <div id="admin-overlay">
   <div class="admin-panel">
-<<<<<<< HEAD
     <div class="admin-header">
       <h2>⚙️ 管理者ダッシュボード</h2>
       <button class="btn btn-default" id="close-admin">閉じる</button>
@@ -922,23 +606,12 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
     <div class="admin-body">
       <div class="adm-section">
         <div class="adm-section-title">サーバー状況</div>
-=======
-    <div class="admin-panel-header">
-      ■ 管理者ダッシュボード
-      <button class="btn" id="close-admin">閉じる</button>
-    </div>
-    <div class="admin-panel-body">
-      <!-- Stats -->
-      <div class="adm-section">
-        <div class="adm-section-title">■ サーバー状況</div>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
         <div class="adm-stats">
           <div class="adm-stat"><span class="v" id="st-users">0</span><span class="l">接続中</span></div>
           <div class="adm-stat"><span class="v" id="st-rooms">0</span><span class="l">板数</span></div>
           <div class="adm-stat"><span class="v" id="st-banned">0</span><span class="l">BAN数</span></div>
         </div>
       </div>
-<<<<<<< HEAD
       <div class="adm-section">
         <div class="adm-section-title">板管理</div>
         <div class="adm-input-row">
@@ -949,33 +622,13 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
       </div>
       <div class="adm-section">
         <div class="adm-section-title">ユーザー管理</div>
-=======
-      <!-- Room -->
-      <div class="adm-section">
-        <div class="adm-section-title">■ 板管理</div>
-        <div class="adm-new-room">
-          <input type="text" id="new-room-name" placeholder="新しい板名…" maxlength="30"/>
-          <button class="btn" onclick="createRoom()">作成</button>
-        </div>
-        <div id="adm-room-list"></div>
-      </div>
-      <!-- Users -->
-      <div class="adm-section">
-        <div class="adm-section-title">■ ユーザー管理</div>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
         <table class="adm-user-table">
           <thead><tr><th>ユーザー</th><th>板</th><th>IP</th><th>操作</th></tr></thead>
           <tbody id="adm-user-tbody"></tbody>
         </table>
       </div>
-<<<<<<< HEAD
       <div class="adm-section">
         <div class="adm-section-title">発言ログ（最新50件）</div>
-=======
-      <!-- Log -->
-      <div class="adm-section">
-        <div class="adm-section-title">■ 発言ログ（最新50件）</div>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
         <div class="adm-log" id="adm-log"></div>
       </div>
     </div>
@@ -985,31 +638,23 @@ html,body{height:100%;font-family:var(--font);font-size:13px;background:var(--bg
 <!-- キック通知 -->
 <div id="kicked-overlay">
   <div class="kicked-box">
-<<<<<<< HEAD
     <div class="kick-icon">⛔</div>
     <h2>接続を切断されました</h2>
-=======
-    <h2>⛔ 接続を切断されました</h2>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     <p id="kicked-reason"></p>
   </div>
 </div>
 
-<<<<<<< HEAD
 <!-- トースト -->
 <div id="toast-container"></div>
 
 <!-- 未読バッジ -->
 <div id="unread-badge" onclick="scrollToBottom()">↓ 新しいメッセージ</div>
 
-=======
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 <script>
 // ═══════════════════════════════════════════
 //  状態
 // ═══════════════════════════════════════════
 let socket = null;
-<<<<<<< HEAD
 let myToken = '', myName = '', amAdmin = false, myRoom = '';
 let msgCount = 0;
 let typingTimeout;
@@ -1019,28 +664,15 @@ let isSearchMode = false;
 let isAtBottom = true;
 let unreadCount = 0;
 let lastDate = null;
-=======
-let myToken = '', myName = '', amAdmin = false;
-let myRoom = '';
-let resCount = 0;
-let typingTimeout;
-let typingUsers = new Map();
-let allRooms = [];
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 
 // DOM
 const authScreen   = document.getElementById('auth-screen');
 const chatScreen   = document.getElementById('chat-screen');
-<<<<<<< HEAD
 const messagesWrap = document.getElementById('messages-wrap');
-=======
-const resList      = document.getElementById('res-list');
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 const msgInput     = document.getElementById('msg-input');
 const typingBar    = document.getElementById('typing-bar');
 const adminOverlay = document.getElementById('admin-overlay');
 const roomUl       = document.getElementById('room-ul');
-<<<<<<< HEAD
 const emptyState   = document.getElementById('empty-state');
 const unreadBadge  = document.getElementById('unread-badge');
 const searchBar    = document.getElementById('search-bar');
@@ -1089,22 +721,6 @@ function scrollToBottom() {
 }
 
 // ─── 認証タブ ─────────────────────────────────────────────
-=======
-
-// ═══════════════════════════════════════════
-//  ユーティリティ
-// ═══════════════════════════════════════════
-const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function fmtDate(ts) {
-  const d = new Date(ts);
-  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}(${['日','月','火','水','木','金','土'][d.getDay()]}) ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
-}
-function shortId(id) { return id.slice(-8); }
-
-// ═══════════════════════════════════════════
-//  認証タブ切り替え
-// ═══════════════════════════════════════════
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 function switchTab(tab) {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
@@ -1112,12 +728,6 @@ function switchTab(tab) {
   document.getElementById('panel-'+tab).classList.add('active');
 }
 
-<<<<<<< HEAD
-=======
-// ═══════════════════════════════════════════
-//  ログイン / 登録
-// ═══════════════════════════════════════════
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 async function apiPost(url, body) {
   const r = await fetch(url, {
     method:'POST', headers:{'Content-Type':'application/json'},
@@ -1140,11 +750,7 @@ document.getElementById('login-btn').onclick = async () => {
 document.getElementById('reg-btn').onclick = async () => {
   const username = document.getElementById('reg-name').value.trim();
   const password = document.getElementById('reg-pass').value;
-<<<<<<< HEAD
   const password2 = document.getElementById('reg-pass2').value;
-=======
-  const password2= document.getElementById('reg-pass2').value;
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
   const err = document.getElementById('reg-err');
   err.textContent = '';
   if (!username || !password) { err.textContent = '入力してください'; return; }
@@ -1154,7 +760,6 @@ document.getElementById('reg-btn').onclick = async () => {
   startChat(res.token, res.username, res.isAdmin);
 };
 
-<<<<<<< HEAD
 ['login-pass','reg-pass2'].forEach(id => {
   document.getElementById(id).addEventListener('keydown', e => {
     if (e.key === 'Enter') {
@@ -1164,34 +769,16 @@ document.getElementById('reg-btn').onclick = async () => {
 });
 
 // ─── チャット開始 ─────────────────────────────────────────
-=======
-// Enterキー対応
-document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-btn').click(); });
-document.getElementById('reg-pass2').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('reg-btn').click(); });
-
-// ═══════════════════════════════════════════
-//  チャット開始
-// ═══════════════════════════════════════════
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 function startChat(token, username, isAdmin) {
   myToken = token; myName = username; amAdmin = isAdmin;
   authScreen.style.display = 'none';
   chatScreen.style.display = 'flex';
-<<<<<<< HEAD
   document.getElementById('header-username').textContent = username;
-=======
-  document.getElementById('header-username').textContent = username + ' さん';
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
   if (isAdmin) {
     document.getElementById('admin-badge-header').style.display = '';
     document.getElementById('admin-link').style.display = '';
   }
   initSocket();
-<<<<<<< HEAD
-=======
-  // デフォルトでGeneralに入室
-  joinRoom('General');
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 }
 
 function logout() {
@@ -1199,7 +786,6 @@ function logout() {
   myToken = ''; myName = ''; amAdmin = false; myRoom = '';
   chatScreen.style.display = 'none';
   authScreen.style.display = 'flex';
-<<<<<<< HEAD
   ['login-name','login-pass'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('login-err').textContent = '';
 }
@@ -1209,25 +795,10 @@ function initSocket() {
   socket = io({ transports: ['polling', 'websocket'] });
 
   socket.on('joined', ({ isAdmin }) => {
-=======
-  document.getElementById('login-name').value = '';
-  document.getElementById('login-pass').value = '';
-  document.getElementById('login-err').textContent = '';
-}
-
-// ═══════════════════════════════════════════
-//  Socket.IO
-// ═══════════════════════════════════════════
-function initSocket() {
-  socket = io({ transports: ['polling', 'websocket'] });
-
-  socket.on('joined', ({ isAdmin, username }) => {
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     amAdmin = isAdmin;
     if (amAdmin) socket.emit('admin:getStats');
   });
 
-<<<<<<< HEAD
   socket.on('history', (messages) => {
     messagesWrap.innerHTML = '';
     emptyState.style.display = 'none';
@@ -1277,17 +848,6 @@ function initSocket() {
     document.getElementById('member-info').textContent = `${count}人が閲覧中`;
     document.getElementById('online-count').innerHTML =
       `<strong>${count}</strong> 人がオンライン`;
-=======
-  socket.on('message', appendRes);
-
-  socket.on('system', ({ text, timestamp }) => {
-    appendSystemRes(text, timestamp);
-  });
-
-  socket.on('members', (members) => {
-    document.getElementById('member-info').textContent =
-      `${members.length}人いる`;
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     updateRoomList();
   });
 
@@ -1298,7 +858,6 @@ function initSocket() {
   });
 
   socket.on('deleteMsg', ({ msgId }) => {
-<<<<<<< HEAD
     const el = document.querySelector(`.msg[data-id="${msgId}"]`);
     if (el) {
       const body = el.querySelector('.msg-body');
@@ -1306,34 +865,18 @@ function initSocket() {
       body.classList.add('deleted');
       const actions = el.querySelector('.msg-actions');
       if (actions) actions.remove();
-=======
-    const el = document.querySelector(`.res[data-id="${msgId}"]`);
-    if (el) {
-      el.querySelector('.res-body').textContent = '（この発言は削除されました）';
-      el.querySelector('.res-body').style.color = '#aaa';
-      const delBtn = el.querySelector('.res-del');
-      if (delBtn) delBtn.remove();
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     }
   });
 
   socket.on('admin:stats', renderAdminStats);
 
   socket.on('roomCreated', ({ room }) => {
-<<<<<<< HEAD
     socket.emit('getRooms');
     showToast(`板「${room}」が作成されました`, 'success');
   });
 
   socket.on('roomDeleted', ({ room }) => {
     appendSystemMsg(`板「${room}」は削除されました`);
-=======
-    updateRoomList();
-  });
-
-  socket.on('roomDeleted', ({ room }) => {
-    appendSystemRes(`板「${room}」は削除されました`);
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
   });
 
   socket.on('kicked', ({ reason }) => {
@@ -1345,19 +888,15 @@ function initSocket() {
     alert(msg);
     logout();
   });
-<<<<<<< HEAD
 
   socket.on('connect', () => {
     socket.emit('getRooms');
   });
-=======
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 }
 
 function joinRoom(roomName) {
   if (!socket) return;
   myRoom = roomName;
-<<<<<<< HEAD
   msgCount = 0;
   lastDate = null;
   isSearchMode = false;
@@ -1368,25 +907,12 @@ function joinRoom(roomName) {
   emptyState && (emptyState.style.display = '');
 
   document.querySelectorAll('.room-item').forEach(a => {
-=======
-  resCount = 0;
-  resList.innerHTML = '';
-  typingUsers.clear();
-  updateTyping();
-
-  document.getElementById('thread-title').textContent = `■ ${roomName}`;
-  document.getElementById('member-info').textContent = '';
-
-  // 板一覧の active 更新
-  document.querySelectorAll('#room-ul li a').forEach(a => {
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     a.classList.toggle('active', a.dataset.room === roomName);
   });
 
   socket.emit('join', { token: myToken, room: roomName });
 }
 
-<<<<<<< HEAD
 // ─── 板一覧 ───────────────────────────────────────────────
 const ROOM_ICONS = { 'General':'🌐','雑談':'💬','質問':'❓','ゲーム':'🎮','アニメ':'🎌' };
 function getRoomIcon(name) { return ROOM_ICONS[name] || '📋'; }
@@ -1469,80 +995,16 @@ function updateTyping() {
 }
 
 // ─── 送信 ─────────────────────────────────────────────────
-=======
-// ═══════════════════════════════════════════
-//  板一覧
-// ═══════════════════════════════════════════
-const DEFAULT_ROOMS = ['General','雑談','質問','ゲーム','アニメ'];
-function updateRoomList(rooms) {
-  if (rooms) allRooms = rooms;
-  const list = allRooms.length ? allRooms : DEFAULT_ROOMS.map(n => ({ name: n }));
-  roomUl.innerHTML = list.map(r =>
-    `<li><a data-room="${esc(r.name)}" class="${r.name===myRoom?'active':''}"
-      onclick="joinRoom('${esc(r.name)}')">${esc(r.name)}</a></li>`
-  ).join('');
-}
-updateRoomList();
-
-// ═══════════════════════════════════════════
-//  レス表示
-// ═══════════════════════════════════════════
-function appendRes({ id, name, color, text, timestamp, isAdmin: senderAdmin }) {
-  resCount++;
-  const div = document.createElement('div');
-  div.className = 'res';
-  div.dataset.id = id;
-
-  const delBtn = amAdmin
-    ? `<button class="res-del" onclick="deleteMsgAdmin('${id}')" title="削除">［削除］</button>`
-    : '';
-
-  div.innerHTML = `
-    <div class="res-head">
-      <span class="res-num">${resCount}</span>
-      <span class="res-name${senderAdmin?' admin-name':''}">${esc(name)}</span>
-      ${senderAdmin ? '<span class="admin-badge">管理者</span>' : ''}
-      <span class="res-date">${fmtDate(timestamp)}</span>
-      <span class="res-id">ID:${shortId(id)}</span>
-      ${delBtn}
-    </div>
-    <div class="res-body">${esc(text)}</div>`;
-  resList.appendChild(div);
-  resList.scrollTop = resList.scrollHeight;
-}
-
-function appendSystemRes(text, timestamp) {
-  const div = document.createElement('div');
-  div.className = 'res system-res';
-  div.innerHTML = `<div class="res-body">--- ${esc(text)} ---</div>`;
-  resList.appendChild(div);
-  resList.scrollTop = resList.scrollHeight;
-}
-
-function updateTyping() {
-  const names = [...typingUsers.values()];
-  typingBar.textContent = names.length
-    ? `${names.join('、')} が入力中…`
-    : '';
-}
-
-// ═══════════════════════════════════════════
-//  送信
-// ═══════════════════════════════════════════
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 document.getElementById('send-btn').onclick = sendMsg;
 msgInput.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); sendMsg(); }
 });
 msgInput.addEventListener('input', () => {
   if (!socket) return;
-<<<<<<< HEAD
   // テキストエリア自動リサイズ
   msgInput.style.height = '44px';
   msgInput.style.height = Math.min(msgInput.scrollHeight, 200) + 'px';
 
-=======
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
   socket.emit('typing', true);
   clearTimeout(typingTimeout);
   typingTimeout = setTimeout(() => socket.emit('typing', false), 1500);
@@ -1554,15 +1016,11 @@ function sendMsg() {
   if (!text) return;
   socket.emit('message', text);
   msgInput.value = '';
-<<<<<<< HEAD
   msgInput.style.height = '44px';
-=======
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
   socket.emit('typing', false);
   clearTimeout(typingTimeout);
 }
 
-<<<<<<< HEAD
 // ─── 検索 ─────────────────────────────────────────────────
 function toggleSearch() {
   isSearchMode = !isSearchMode;
@@ -1608,11 +1066,6 @@ function clearSearch() {
 }
 
 // ─── 管理者 ───────────────────────────────────────────────
-=======
-// ═══════════════════════════════════════════
-//  管理者機能
-// ═══════════════════════════════════════════
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
 function openAdmin() {
   adminOverlay.classList.add('open');
   if (socket) socket.emit('admin:getStats');
@@ -1621,11 +1074,7 @@ document.getElementById('close-admin').onclick = () => adminOverlay.classList.re
 adminOverlay.addEventListener('click', e => { if(e.target===adminOverlay) adminOverlay.classList.remove('open'); });
 
 function deleteMsgAdmin(msgId) {
-<<<<<<< HEAD
   if (!confirm('このメッセージを削除しますか？')) return;
-=======
-  if (!confirm('このレスを削除しますか？')) return;
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
   socket.emit('admin:deleteMsg', { msgId });
 }
 function kickUser(sid) {
@@ -1643,11 +1092,7 @@ function createRoom() {
   document.getElementById('new-room-name').value = '';
 }
 function deleteRoom(name) {
-<<<<<<< HEAD
   if (!confirm(`板「${name}」を削除しますか？`)) return;
-=======
-  if (!confirm(`板「${name}」を削除しますか？全員が切断されます。`)) return;
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
   socket.emit('admin:deleteRoom', { roomName: name });
 }
 
@@ -1657,7 +1102,6 @@ function renderAdminStats({ totalUsers, totalRooms, bannedCount, rooms, recentLo
   document.getElementById('st-rooms').textContent = totalRooms;
   document.getElementById('st-banned').textContent = bannedCount;
 
-<<<<<<< HEAD
   document.getElementById('adm-room-list').innerHTML = rooms.map(r => `
     <div class="adm-room-row">
       <span>${getRoomIcon(r.name)} ${esc(r.name)} <span style="color:var(--text-muted);font-size:11px;">(${r.count}人)</span></span>
@@ -1671,42 +1115,16 @@ function renderAdminStats({ totalUsers, totalRooms, bannedCount, rooms, recentLo
       <td>${esc(u.roomName)}</td>
       <td style="font-size:10px;font-family:var(--mono)">${esc(u.ip||'')}</td>
       <td style="white-space:nowrap">${u.isAdmin ? '－' : `
-=======
-  // 板一覧
-  document.getElementById('adm-room-list').innerHTML = rooms.map(r => `
-    <div class="adm-room-row">
-      <span>■ ${esc(r.name)}（${r.count}人）</span>
-      <button class="btn btn-danger" onclick="deleteRoom('${esc(r.name)}')">削除</button>
-    </div>`).join('');
-
-  // ユーザー
-  const allUsers = rooms.flatMap(r => r.members.map(m => ({ ...m, roomName: r.name })));
-  document.getElementById('adm-user-tbody').innerHTML = allUsers.map(u => `
-    <tr>
-      <td>${esc(u.username)}${u.isAdmin?' <span class="admin-badge">管理者</span>':''}</td>
-      <td>${esc(u.roomName)}</td>
-      <td style="font-size:10px">${esc(u.ip||'')}</td>
-      <td>${u.isAdmin ? '－' : `
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
         <button class="btn btn-warn" onclick="kickUser('${u.socketId}')">キック</button>
         <button class="btn btn-danger" onclick="banUser('${u.socketId}','${esc(u.username)}')">BAN</button>
       `}</td>
     </tr>`).join('');
 
-<<<<<<< HEAD
   document.getElementById('adm-log').innerHTML = [...recentLogs].reverse().map(l => `
     <div class="adm-log-row">
       <span class="adm-log-meta">${fmtDate(l.timestamp)} [${esc(l.room)}] ${esc(l.username||l.name)}</span>
       <span class="adm-log-text">${esc(l.text)}</span>
       <button class="msg-del-btn" onclick="deleteMsgAdmin('${l.id}')">削除</button>
-=======
-  // ログ
-  document.getElementById('adm-log').innerHTML = [...recentLogs].reverse().map(l => `
-    <div class="adm-log-row">
-      <span class="adm-log-meta">${fmtDate(l.timestamp)} [${esc(l.room)}] ${esc(l.name)}</span>
-      <span class="adm-log-text">${esc(l.text)}</span>
-      <button class="adm-log-del" onclick="deleteMsgAdmin('${l.id}')">削除</button>
->>>>>>> 8c072dbeb98091548105920221216d4902bf82ec
     </div>`).join('');
 }
 </script>
