@@ -3,7 +3,8 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 const crypto = require('crypto');
-const Database = require('better-sqlite3');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
 
 const app = express();
 const server = http.createServer(app);
@@ -15,114 +16,107 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ─── SQLite DB ────────────────────────────────────────────
-const db = new Database(path.join(__dirname, 'chat.db'));
+// ─── Firebase Admin 初期化 ────────────────────────────────
+// FIREBASE_SERVICE_ACCOUNT 環境変数にサービスアカウントJSONを設定
+// 未設定時は databaseURL だけで匿名アクセス（開発用）
+let db;
+try {
+  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
+    ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+    : null;
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS accounts (
-    username TEXT PRIMARY KEY,
-    password_hash TEXT NOT NULL,
-    is_admin INTEGER NOT NULL DEFAULT 0,
-    created_at INTEGER NOT NULL DEFAULT (unixepoch())
+  initializeApp(serviceAccount
+    ? { credential: cert(serviceAccount), databaseURL: 'https://kapibarazoku-d0a6f-default-rtdb.firebaseio.com' }
+    : { databaseURL: 'https://kapibarazoku-d0a6f-default-rtdb.firebaseio.com' }
   );
-
-  CREATE TABLE IF NOT EXISTS messages (
-    id TEXT PRIMARY KEY,
-    room TEXT NOT NULL,
-    username TEXT NOT NULL,
-    text TEXT NOT NULL,
-    is_admin INTEGER NOT NULL DEFAULT 0,
-    deleted INTEGER NOT NULL DEFAULT 0,
-    timestamp INTEGER NOT NULL
-  );
-
-  CREATE TABLE IF NOT EXISTS rooms (
-    name TEXT PRIMARY KEY,
-    created_at INTEGER NOT NULL DEFAULT (unixepoch())
-  );
-
-  CREATE TABLE IF NOT EXISTS banned (
-    value TEXT PRIMARY KEY,
-    banned_at INTEGER NOT NULL DEFAULT (unixepoch())
-  );
-
-  CREATE INDEX IF NOT EXISTS idx_messages_room ON messages(room, timestamp);
-`);
-
-// デフォルト板を作成
-const defaultRooms = ['General', '雑談', '質問', 'ゲーム', 'アニメ'];
-const insertRoom = db.prepare('INSERT OR IGNORE INTO rooms(name) VALUES(?)');
-defaultRooms.forEach(r => insertRoom.run(r));
-
-// 管理者アカウント初期化
-function sha256(str) {
-  return crypto.createHash('sha256').update(str).digest('hex');
-}
-db.prepare('INSERT OR IGNORE INTO accounts(username, password_hash, is_admin) VALUES(?,?,1)')
-  .run('カピバラ族のリーダー', sha256('tkhr0422'));
-
-// ─── セッション（メモリ）────────────────────────────────
-const sessions = new Map();
-
-function makeToken() {
-  return crypto.randomBytes(24).toString('hex');
+  db = getDatabase();
+  console.log('✅ Firebase connected');
+} catch (e) {
+  console.error('Firebase init error:', e.message);
+  process.exit(1);
 }
 
 // ─── DB ヘルパー ─────────────────────────────────────────
-const stmts = {
-  getAccount: db.prepare('SELECT * FROM accounts WHERE username = ?'),
-  createAccount: db.prepare('INSERT INTO accounts(username, password_hash) VALUES(?,?)'),
-  insertMsg: db.prepare('INSERT INTO messages(id,room,username,text,is_admin,timestamp) VALUES(?,?,?,?,?,?)'),
-  getRoomMessages: db.prepare('SELECT * FROM messages WHERE room=? AND deleted=0 ORDER BY timestamp ASC LIMIT ?'),
-  deleteMsg: db.prepare('UPDATE messages SET deleted=1 WHERE id=?'),
-  getAllRooms: db.prepare('SELECT name FROM rooms ORDER BY name ASC'),
-  createRoom: db.prepare('INSERT OR IGNORE INTO rooms(name) VALUES(?)'),
-  deleteRoom: db.prepare('DELETE FROM rooms WHERE name=?'),
-  isBanned: db.prepare('SELECT 1 FROM banned WHERE value=?'),
-  addBan: db.prepare('INSERT OR IGNORE INTO banned(value) VALUES(?)'),
-  getBannedCount: db.prepare('SELECT COUNT(*) as cnt FROM banned'),
-  getRecentLogs: db.prepare('SELECT * FROM messages WHERE deleted=0 ORDER BY timestamp DESC LIMIT 50'),
-  searchMessages: db.prepare('SELECT * FROM messages WHERE room=? AND deleted=0 AND text LIKE ? ORDER BY timestamp DESC LIMIT 50'),
-  getRoomCount: db.prepare('SELECT COUNT(*) as cnt FROM rooms'),
-};
+const ref = (p) => db.ref(p);
+
+async function dbGet(path) {
+  const snap = await ref(path).get();
+  return snap.exists() ? snap.val() : null;
+}
+async function dbSet(path, val) { await ref(path).set(val); }
+async function dbUpdate(path, val) { await ref(path).update(val); }
+async function dbPush(path, val) { return await ref(path).push(val); }
+
+// ─── ユーティリティ ───────────────────────────────────────
+function sha256(str) {
+  return crypto.createHash('sha256').update(str).digest('hex');
+}
+function makeToken() { return crypto.randomBytes(24).toString('hex'); }
+
+// ─── 起動時：管理者アカウント・デフォルト板を初期化 ─────
+async function bootstrap() {
+  // 管理者アカウント
+  const adminExists = await dbGet('accounts/カピバラ族のリーダー');
+  if (!adminExists) {
+    await dbSet('accounts/カピバラ族のリーダー', {
+      passwordHash: sha256('tkhr0422'),
+      isAdmin: true
+    });
+    console.log('管理者アカウント作成');
+  }
+
+  // デフォルト板
+  const defaultRooms = ['General', '雑談', '質問', 'ゲーム', 'アニメ'];
+  for (const r of defaultRooms) {
+    const exists = await dbGet(`rooms/${r}`);
+    if (!exists) await dbSet(`rooms/${r}`, { createdAt: Date.now() });
+  }
+  console.log('✅ Bootstrap complete');
+}
+
+// ─── セッション（メモリ）────────────────────────────────
+const sessions = new Map(); // token -> username
 
 // ─── REST API ─────────────────────────────────────────────
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: '入力が空です' });
 
-  const account = stmts.getAccount.get(username);
+  const account = await dbGet(`accounts/${encodeKey(username)}`);
   if (!account) return res.status(401).json({ error: 'ユーザーが存在しません' });
-  if (account.password_hash !== sha256(password))
+  if (account.passwordHash !== sha256(password))
     return res.status(401).json({ error: 'パスワードが違います' });
 
   const token = makeToken();
   sessions.set(token, username);
-  res.json({ token, username, isAdmin: !!account.is_admin });
+  res.json({ token, username, isAdmin: !!account.isAdmin });
 });
 
-app.post('/api/register', (req, res) => {
+app.post('/api/register', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: '入力が空です' });
   if (username.length > 20) return res.status(400).json({ error: '名前は20文字以内' });
-  if (password.length < 4) return res.status(400).json({ error: 'パスワードは4文字以上' });
-  if (stmts.getAccount.get(username)) return res.status(409).json({ error: 'すでに使われている名前です' });
+  if (password.length < 4)  return res.status(400).json({ error: 'パスワードは4文字以上' });
 
-  stmts.createAccount.run(username, sha256(password));
+  const exists = await dbGet(`accounts/${encodeKey(username)}`);
+  if (exists) return res.status(409).json({ error: 'すでに使われている名前です' });
+
+  await dbSet(`accounts/${encodeKey(username)}`, {
+    passwordHash: sha256(password),
+    isAdmin: false
+  });
   const token = makeToken();
   sessions.set(token, username);
   res.json({ token, username, isAdmin: false });
 });
 
-// メッセージ検索API
-app.get('/api/search', (req, res) => {
-  const { room, q } = req.query;
-  if (!room || !q) return res.json([]);
-  const results = stmts.searchMessages.all(room, `%${q}%`);
-  res.json(results);
-});
+// Firebase キーに使えない文字をエスケープ
+function encodeKey(str) {
+  return str.replace(/[.#$[\]/]/g, c => '%' + c.charCodeAt(0).toString(16));
+}
+function encodeRoom(str) { return encodeKey(str); }
 
-// ─── State ───────────────────────────────────────────────
+// ─── 接続中ユーザー（メモリ）────────────────────────────
 const users = new Map(); // socketId -> { username, room, isAdmin, ip }
 
 const COLORS = ['#e07b54','#5b9bd5','#5aab7f','#9b72c4','#c4a44a','#5ab8c4','#c45a7f','#7f9b5a'];
@@ -140,44 +134,63 @@ function getMembersInRoom(room) {
     .map(([id, u]) => ({ socketId: id, username: u.username, isAdmin: u.isAdmin }));
 }
 
-function broadcastAdminStats() {
+async function broadcastAdminStats() {
   for (const [sid, u] of users) {
     if (!u.isAdmin) continue;
     const sock = io.sockets.sockets.get(sid);
     if (!sock) continue;
 
-    const roomList = stmts.getAllRooms.all().map(r => ({
-      name: r.name,
-      count: getMembersInRoom(r.name).length,
-      members: getMembersInRoom(r.name).map(m => ({ ...m, ip: users.get(m.socketId)?.ip || '' }))
+    const roomsData = await dbGet('rooms') || {};
+    const roomList = Object.keys(roomsData).map(r => ({
+      name: r,
+      count: getMembersInRoom(r).length,
+      members: getMembersInRoom(r).map(m => ({ ...m, ip: users.get(m.socketId)?.ip || '' }))
     }));
+
+    // 最新ログ50件
+    const logsSnap = await ref('messages').orderByChild('timestamp').limitToLast(50).get();
+    const recentLogs = [];
+    if (logsSnap.exists()) {
+      logsSnap.forEach(child => {
+        const m = child.val();
+        if (!m.deleted) recentLogs.push({ ...m, id: child.key });
+      });
+    }
+
+    const bannedSnap = await ref('banned').get();
+    const bannedCount = bannedSnap.exists() ? Object.keys(bannedSnap.val()).length : 0;
 
     sock.emit('admin:stats', {
       totalUsers: users.size,
       totalRooms: roomList.length,
-      bannedCount: stmts.getBannedCount.get().cnt,
+      bannedCount,
       rooms: roomList,
-      recentLogs: stmts.getRecentLogs.all().reverse()
+      recentLogs: recentLogs.reverse()
     });
   }
 }
 
 // ─── Socket.IO ────────────────────────────────────────────
-let typingTimeouts = new Map();
+const typingTimeouts = new Map();
 
 io.on('connection', (socket) => {
   const ip = getIP(socket);
 
-  socket.on('join', ({ token, room }) => {
+  socket.on('getRooms', async () => {
+    const roomsData = await dbGet('rooms') || {};
+    socket.emit('roomList', Object.keys(roomsData).map(r => ({ name: r })));
+  });
+
+  socket.on('join', async ({ token, room }) => {
     const username = sessions.get(token);
-    if (!username) {
-      socket.emit('authError', 'セッションが無効です。再ログインしてください。');
-      return;
-    }
-    if (stmts.isBanned.get(username) || stmts.isBanned.get(ip)) {
+    if (!username) { socket.emit('authError', 'セッションが無効です。再ログインしてください。'); return; }
+
+    // BAN チェック
+    const bannedUser = await dbGet(`banned/${encodeKey(username)}`);
+    const bannedIp   = await dbGet(`banned/${encodeKey(ip)}`);
+    if (bannedUser || bannedIp) {
       socket.emit('kicked', { reason: 'あなたはBANされています。' });
-      socket.disconnect(true);
-      return;
+      socket.disconnect(true); return;
     }
 
     // 前の部屋から退出
@@ -188,20 +201,34 @@ io.on('connection', (socket) => {
       io.to(prev.room).emit('members', getMembersInRoom(prev.room));
     }
 
-    const account = stmts.getAccount.get(username);
-    const isAdmin = !!account?.is_admin;
+    const account = await dbGet(`accounts/${encodeKey(username)}`);
+    const isAdmin = !!account?.isAdmin;
     const trimRoom = (room || 'General').trim().slice(0, 30);
+
+    // 板を作成（なければ）
+    const roomExists = await dbGet(`rooms/${encodeRoom(trimRoom)}`);
+    if (!roomExists) await dbSet(`rooms/${encodeRoom(trimRoom)}`, { createdAt: Date.now() });
 
     users.set(socket.id, { username, room: trimRoom, isAdmin, ip, color: nextColor() });
     socket.join(trimRoom);
 
-    // 板が存在しなければ作成
-    stmts.createRoom.run(trimRoom);
-
     socket.emit('joined', { isAdmin, username });
 
-    // 過去100件のメッセージを送信
-    const history = stmts.getRoomMessages.all(trimRoom, 100);
+    // 過去100件の履歴を送信
+    const histSnap = await ref('messages')
+      .orderByChild('room_ts')
+      .startAt(`${trimRoom}_`)
+      .endAt(`${trimRoom}_\uf8ff`)
+      .limitToLast(100)
+      .get();
+
+    const history = [];
+    if (histSnap.exists()) {
+      histSnap.forEach(child => {
+        const m = child.val();
+        if (!m.deleted) history.push({ ...m, id: child.key });
+      });
+    }
     socket.emit('history', history);
 
     io.to(trimRoom).emit('system', {
@@ -212,25 +239,28 @@ io.on('connection', (socket) => {
     broadcastAdminStats();
   });
 
-  socket.on('message', (text) => {
+  socket.on('message', async (text) => {
     const user = users.get(socket.id);
     if (!user || !text || typeof text !== 'string') return;
     const trimmed = text.trim().slice(0, 500);
     if (!trimmed) return;
 
     const msg = {
-      id: `${socket.id}-${Date.now()}`,
       room: user.room,
       username: user.username,
       name: user.username,
       text: trimmed,
       timestamp: Date.now(),
       isAdmin: user.isAdmin,
-      is_admin: user.isAdmin ? 1 : 0
+      deleted: false,
+      // 部屋+タイムスタンプで範囲クエリできるようにする
+      room_ts: `${user.room}_${Date.now()}`
     };
 
-    stmts.insertMsg.run(msg.id, msg.room, msg.username, msg.text, msg.is_admin, msg.timestamp);
-    io.to(user.room).emit('message', msg);
+    const pushed = await dbPush('messages', msg);
+    const msgWithId = { ...msg, id: pushed.key };
+
+    io.to(user.room).emit('message', msgWithId);
     broadcastAdminStats();
   });
 
@@ -246,7 +276,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // ─── 管理者 ──────────────────────────────────────────
   function chkAdmin() { return users.get(socket.id)?.isAdmin === true; }
 
   socket.on('admin:kick', ({ targetSocketId }) => {
@@ -260,37 +289,39 @@ io.on('connection', (socket) => {
     broadcastAdminStats();
   });
 
-  socket.on('admin:ban', ({ targetSocketId }) => {
+  socket.on('admin:ban', async ({ targetSocketId }) => {
     if (!chkAdmin()) return;
     const tUser = users.get(targetSocketId);
     const tSock = io.sockets.sockets.get(targetSocketId);
     if (!tUser) return;
-    stmts.addBan.run(tUser.username);
-    stmts.addBan.run(tUser.ip);
+    await dbSet(`banned/${encodeKey(tUser.username)}`, true);
+    await dbSet(`banned/${encodeKey(tUser.ip)}`, true);
     if (tSock) { tSock.emit('kicked', { reason: '管理者によってBANされました。' }); tSock.disconnect(true); }
     io.to(tUser.room).emit('system', { text: `${tUser.username} がBANされました`, timestamp: Date.now() });
     broadcastAdminStats();
   });
 
-  socket.on('admin:deleteMsg', ({ msgId }) => {
+  socket.on('admin:deleteMsg', async ({ msgId }) => {
     if (!chkAdmin()) return;
-    stmts.deleteMsg.run(msgId);
+    await dbUpdate(`messages/${msgId}`, { deleted: true });
     io.emit('deleteMsg', { msgId });
     broadcastAdminStats();
   });
 
-  socket.on('admin:createRoom', ({ roomName }) => {
+  socket.on('admin:createRoom', async ({ roomName }) => {
     if (!chkAdmin()) return;
     const r = (roomName || '').trim().slice(0, 30);
     if (!r) return;
-    stmts.createRoom.run(r);
+    const exists = await dbGet(`rooms/${encodeRoom(r)}`);
+    if (exists) return;
+    await dbSet(`rooms/${encodeRoom(r)}`, { createdAt: Date.now() });
     io.emit('roomCreated', { room: r });
     broadcastAdminStats();
   });
 
-  socket.on('admin:deleteRoom', ({ roomName }) => {
+  socket.on('admin:deleteRoom', async ({ roomName }) => {
     if (!chkAdmin()) return;
-    stmts.deleteRoom.run(roomName);
+    await ref(`rooms/${encodeRoom(roomName)}`).remove();
     [...users.entries()].forEach(([id, u]) => {
       if (u.room !== roomName) return;
       const s = io.sockets.sockets.get(id);
@@ -300,12 +331,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('admin:getStats', () => { if (chkAdmin()) broadcastAdminStats(); });
-
-  // 板一覧取得
-  socket.on('getRooms', () => {
-    const rooms = stmts.getAllRooms.all().map(r => ({ name: r.name }));
-    socket.emit('roomList', rooms);
-  });
 
   socket.on('disconnect', () => {
     const user = users.get(socket.id);
@@ -322,4 +347,6 @@ io.on('connection', (socket) => {
 app.get('/health', (_, res) => res.json({ status: 'ok', users: users.size }));
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`✅ Chat server v2 on port ${PORT}`));
+bootstrap().then(() => {
+  server.listen(PORT, () => console.log(`✅ Chat server (Firebase) on port ${PORT}`));
+});
